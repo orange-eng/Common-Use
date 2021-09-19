@@ -1,5 +1,29 @@
 # Sever Users
 
+## （新）docker 的使用
+使用USTC的GPU集训步骤如下：
+  - 将自己的代码上传到服务器。这里需要使用Xftp，这是一个可视化工具，方便地传输文件
+  - 在G101上进行调试，具体操作如下：
+    - ssh G101 (进入G101)
+    - 将run_docker.sh 和 start_docker_shm放在项目文件中
+      - 在run_docker.sh文件中可以修改镜像名称，例如 image_name=lijm-torch1.4-cuda10.1-cudnn7-jpeg2dct
+      - start_docker_shm中可以修改各种文件目录。一般就改成自己的名字即可
+    - 运行 ./run_docker.sh 即可进入workspace,在该环境中运行代码，调试成功
+  - exit 退出G101
+  - 进入job文件夹，将qsub.py, job.pbs, start文件放入其中
+    - qsub.py文件里面可以修改： GPU数量和型号，startdocker文件夹目录
+    - job.pbs中，要同样的修改GPU数量和型号，startdocker文件夹目录
+    - start文件中，是要寻找主函数文件main.py所在位置，这里举例。下列代码中，workdir指的是start文件所在位置。从workdir推断出hello_world.py所在位置，然后python运行即可。：
+    ```python
+    #!/bin/bash
+    workdir=$(cd $(dirname $0); pwd)
+    cd ${workdir}
+    pwd
+    cd ../..
+    cd code
+    python3 hello_world.py
+    ```
+
 ## 安装PaddleCloud客户端
 - 先登录relay，然后再ssh
 - 然后就可以安装Python,就直接copy语句即可。注意，最后加上--user
